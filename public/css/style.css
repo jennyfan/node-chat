@@ -21,29 +21,26 @@ h1 {
 }
 
 /*** Send message */
-form {
+.form {
   padding: 0;
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  z-index:100;
-  height: 56px;
+  bottom: 5%; left: 5%; right: 5%;
+  width: 100%; height: 56px;
+  z-index: 100;
 }
-form input {
+.form input {
   border: 0;
   height: 100%;
-  width: 80%;
+  width: 90%;
   background-color: #333;
   color: #aeaeae;
   margin: 0;
   padding: 0 16px;
 }
-form input:focus, form input:valid {
+.form input:focus, .form input:valid {
   color: #fff;
 }
-form button {
+/* .form button {
   width: 20%;
   height: 100%;
   background-color: #3E93FF;
@@ -52,16 +49,19 @@ form button {
   margin: 0;
   padding: 0;
 }
-form button:hover {
+.form button:hover {
   background-color: #235697;
-}
+} */
 
 /*** View message ****/
+#chat {
+  display: none;
+}
 #messages {
-  padding: 0 0 16px 24px;
+  margin: 0 5% 5% 5%;
   height: 240px;
-  width: 320px;
-  overflow: scroll;
+  width: 400px;
+  overflow-y: scroll;
   position: absolute;
   bottom: 80px;
   z-index: 100;

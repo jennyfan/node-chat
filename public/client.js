@@ -1,19 +1,18 @@
-$(function () {
-  var socket = io();
+// $(function () {
+//   var socket = io();
+//
+//   // post chat message
+//  $('form').submit(function(){
+//    socket.emit('chat message', $('#m').val());
+//    $('#m').val('');
+//    return false;
+//  });
+//  socket.on('chat message', function(msg){
+//    $('#messages ul').append($('<li>').text(msg));
+//    window.scrollTo(0, document.body.scrollHeight);
+//  });
+// });
 
-  // post chat message
-   $('form').submit(function(){
-   socket.emit('chat message', $('#m').val());
-   $('#m').val('');
-   return false;
- });
- socket.on('chat message', function(msg){
-   $('#messages ul').append($('<li>').text(msg));
-   window.scrollTo(0, document.body.scrollHeight);
- });
-});
-
-/**
 $(function() {
   var FADE_TIME = 150; // ms
   var TYPING_TIMER_LENGTH = 400; // ms
@@ -25,12 +24,12 @@ $(function() {
 
   // Initialize variables
   var $window = $(window);
-  var $usernameInput = $('.usernameInput'); // Input for username
+  var $usernameInput = $('#usernameInput'); // Input for username
   var $messages = $('.messages'); // Messages area
-  var $inputMessage = $('.inputMessage'); // Input message input box
+  var $inputMessage = $('#inputMessage'); // Input message input box
 
-  var $loginPage = $('.login.page'); // The login page
-  var $chatPage = $('.chat.page'); // The chatroom page
+  var $loginPage = $('#login'); // The login page
+  var $chatPage = $('#chat'); // The chatroom page
 
   // Prompt for setting a username
   var username;
@@ -42,18 +41,21 @@ $(function() {
   var socket = io();
 
   function addParticipantsMessage (data) {
+    console.log("addParticipantsMessage");
     var message = '';
     if (data.numUsers === 1) {
-      message += "there's 1 participant";
+      message += "1 participant online";
     } else {
-      message += "there are " + data.numUsers + " participants";
+      message += data.numUsers + " participants online";
     }
     log(message);
   }
 
   // Sets the client's username
   function setUsername () {
-    username = cleanInput($usernameInput.val().trim());
+    username = $usernameInput.val();
+    // username = cleanInput($usernameInput.val().trim());
+    console.log(username);
 
     // If the username is valid
     if (username) {
@@ -69,9 +71,10 @@ $(function() {
 
   // Sends a chat message
   function sendMessage () {
+    console.log("sendMessage");
     var message = $inputMessage.val();
     // Prevent markup from being injected into the message
-    message = cleanInput(message);
+    // message = cleanInput(message);
     // if there is a non-empty message and a socket connection
     if (message && connected) {
       $inputMessage.val('');
@@ -86,7 +89,8 @@ $(function() {
 
   // Log a message
   function log (message, options) {
-    var $el = $('<li>').addClass('log').text(message);
+    console.log("log function");
+    var $el = $("<li>").addClass('log').text(message);
     addMessageElement($el, options);
   }
 
@@ -110,20 +114,23 @@ $(function() {
     var $messageDiv = $('<li class="message"/>')
       .data('username', data.username)
       .addClass(typingClass)
-      .append($usernameDiv, $messageBodyDiv);
+      .append($usernameDiv, " ", $messageBodyDiv);
 
+    console.log("addChatMessage");
     addMessageElement($messageDiv, options);
   }
 
   // Adds the visual chat typing message
   function addChatTyping (data) {
+    console.log("addChatTyping");
     data.typing = true;
-    data.message = 'is typing';
+    data.message = ' is typing';
     addChatMessage(data);
   }
 
   // Removes the visual chat typing message
   function removeChatTyping (data) {
+    console.log("removeChatTyping");
     getTypingMessages(data).fadeOut(function () {
       $(this).remove();
     });
@@ -135,6 +142,7 @@ $(function() {
   // options.prepend - If the element should prepend
   //   all other messages (default = false)
   function addMessageElement (el, options) {
+    console.log("addMessageElement");
     var $el = $(el);
 
     // Setup default options
@@ -157,16 +165,27 @@ $(function() {
     } else {
       $messages.append($el);
     }
-    $messages[0].scrollTop = $messages[0].scrollHeight;
+    console.log("message scroll to");
+
+    var chatTop = $("#messages").scrollTop();
+    var chatHeight = $("#messages").height();
+    console.log(chatHeight, chatTop);
+
+    $("#messages").scrollTop($messages[0].scrollHeight);
+
+    // window.scrollTo(0, document.body.scrollHeight);
+    // $messages[0].scrollTop = $messages[0].scrollHeight;
   }
 
   // Prevents input from having injected markup
   function cleanInput (input) {
+    console.log("cleanInput");
     return $('<div/>').text(input).html();
   }
 
   // Updates the typing event
   function updateTyping () {
+    console.log("updateTyping");
     if (connected) {
       if (!typing) {
         typing = true;
@@ -224,6 +243,7 @@ $(function() {
   });
 
   $inputMessage.on('input', function() {
+    console.log("input message on input");
     updateTyping();
   });
 
@@ -236,6 +256,7 @@ $(function() {
 
   // Focus input when clicking on the message input's border
   $inputMessage.click(function () {
+    console.log("click input");
     $inputMessage.focus();
   });
 
@@ -243,9 +264,10 @@ $(function() {
 
   // Whenever the server emits 'login', log the login message
   socket.on('login', function (data) {
+    console.log("login");
     connected = true;
     // Display the welcome message
-    var message = "Welcome to Socket.IO Chat – ";
+    var message = "Welcome to NODE Emergency Response";
     log(message, {
       prepend: true
     });
@@ -296,5 +318,3 @@ $(function() {
   });
 
 });
-
-**/

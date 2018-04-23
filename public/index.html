@@ -13,10 +13,26 @@
   <body>
 
     <div id="controls" class="controls">
-      <button id="requestHelp" class="requestStatus">Request Help</button>
+      <button id="requestHelp">Request Help</button>
     </div>
 
     <div id="messages">
+        <ul class="messages">
+        </ul>
+    </div>
+
+    <div id="login" class="form">
+        <input id="usernameInput" type="text" autocomplete="off" placeholder="What's your name?" />
+    </div>
+
+    <div id="chat" class="form">
+        <!-- <form action=""> -->
+          <input id="inputMessage" id="m" autocomplete="off" placeholder="Post a public message" />
+          <!-- <button>Send</button>
+        </form> -->
+    </div>
+
+    <!-- <div id="messages">
       <ul>
       </ul>
     </div>
@@ -25,7 +41,7 @@
       <form action="">
         <input id="m" autocomplete="off" placeholder="Post a public message" /><button>Send</button>
       </form>
-    </div>
+    </div> -->
 
     <!-- Visualization placeholders -->
     <div id="call-map" class="map"></div>
