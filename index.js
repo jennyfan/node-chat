@@ -12,7 +12,7 @@ http.listen(port, function(){
 
 
 // Routing
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + 'index.html');
