@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NODE: Connected Emergency Response</title>
+
+    <!-- Load Leaflet CSS -->
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+
+    <div id="controls" class="controls">
+      <button id="requestHelp" class="requestStatus">Request Help</button>
+    </div>
+
+    <div id="messages">
+      <ul>
+      </ul>
+    </div>
+
+    <div id="chatsend">
+      <form action="">
+        <input id="m" autocomplete="off" placeholder="Post a public message" /><button>Send</button>
+      </form>
+    </div>
+
+    <!-- Visualization placeholders -->
+    <div id="call-map" class="map"></div>
+
+    <!-- Load JS libraries -->
+    <script src="js/socket.io-1.2.0.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/d3.min.js"></script>
+    <script src="js/leaflet.js"></script>
+
+    <!-- Visualization objects -->
+    <script src="js/map.js"></script>
+    <script>loadData();</script>
+    <script src="client.js"></script>
+
+  </body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "NODE",
+  "description": "Mesh Network for Connected Emergency Response",
+  "website": "https://jennyfan.github.io/d3-node",
+  "repository": "https://github.com/jennyfan/d3-node",
+  "logo": "https://node-js-sample.herokuapp.com/node.svg",
+  "success_url": "/",
+  "keywords": [
+    "node",
+    "express",
+    "socket.io",
+    "realtime",
+    "websocket"
+  ],
+  "scripts": {
+  },
+  "addons": [
+  ],
+  "env": {
+    "BUILDPACK_URL": "https://github.com/heroku/heroku-buildpack-nodejs"
+  }
+}
