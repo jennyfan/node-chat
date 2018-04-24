@@ -1,4 +1,7 @@
-var theMap, LeafMap;
+var theMap, LeafMap, lat, lon;
+var coords; // global coords
+var showGPS; // global function
+
 var controls = document.getElementById("controls");
 var requestButton = document.getElementById("requestHelp");
 
@@ -76,7 +79,7 @@ CallMap.prototype.initVis = function() {
 			// attribution: 'NODE &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> / <a href="http://cartodb.com/attributions">CartoDB</a>',
 			subdomains: 'abcd',
 			maxZoom: 16,
-			minZoom: 14
+			minZoom: 13
 			})
 	 .addTo(vis.callMap);
 
@@ -117,7 +120,21 @@ CallMap.prototype.updateVis = function() {
 		vis.locations.addLayer(location);
 	});
 
-	d3.select("#requestHelp").on("click", getLocation);
+	d3.select("#requestHelp").on("click", function() {
+    if (this.className == "requested") {
+      console.log("unrequest");
+        $(this).text("Request Help");
+        $(this).removeClass('requested');
+
+        LeafMap.flyTo([lat, lon], 14, {
+          pan: { animate: true },
+          zoom: { animate: true }
+        });
+    } else {
+      console.log("get location");
+      getLocation();
+    }
+  });
 }
 
 
@@ -130,21 +147,23 @@ function getLocation() {
     if (navigator.geolocation) {
         requestButton.innerHTML = "Requesting help...";
 
-        navigator.geolocation.getCurrentPosition(showPosition,showError, {enableHighAccuracy:true,maximumAge: Infinity,timeout:30000});
+        navigator.geolocation.getCurrentPosition(showPosition,showError, {enableHighAccuracy:true,maximumAge: Infinity,timeout:50000});
     } else {
         controls.innerHTML = "Geolocation is not supported by this browser.";
     }
 }
 
 function showPosition(position) {
-	console.log(position);
-	var lat = position.coords.latitude;
-	var lon = position.coords.longitude;
+	// console.log(position);
+  // GUND Default: 42.3760051, -71.1138934
+
+  lat = position.coords.latitude;
+	lon = position.coords.longitude;
 
 	var yourLocation = L.circle([lat, lon], {radius: 50}).setStyle({className:'spotsYou'}).bindTooltip("Your location", {className: 'tooltipYou'});
 
-    requestButton.innerHTML = "Help Requested";
-    requestButton.setAttribute('class','on');
+  requestButton.innerHTML = "Help Requested";
+  requestButton.setAttribute('class','requested');
 
 	theMap.locations.addLayer(yourLocation);
 
@@ -153,6 +172,25 @@ function showPosition(position) {
     zoom: { animate: true }
   });
 
+  coords = [lat.toPrecision(8),lon.toPrecision(8)];
+  $("#coords").text(coords);
+
+    $("#requestHelp").on("mouseover", function() {
+      if (this.className == "cancelled") {
+        $(this).text("Request Help")
+      } else {
+        $(this).text("Cancel Request")
+      }
+    }).on("click", function() {
+      $(this).addClass("cancelled");
+      $("#coords").text("");
+    }).on("mouseout", function() {
+        if (this.className == "cancelled") {
+          $(this).text("Request Help")
+        } else {
+          $(this).text("Help Requested")
+        }
+    });
 }
 
 function showError(error) {
@@ -172,9 +210,7 @@ function showError(error) {
     }
 }
 
-
 function loadData() {
-
     callData.forEach(function(d) {
   		d.name = d.name;
       d.lat = d.coords[0];

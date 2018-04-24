@@ -18,14 +18,7 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + 'index.html');
 });
 
-// io.on('connection', function(socket){
-//   socket.on('chat message', function(msg){
-//     io.emit('chat message', msg);
-//   });
-// });
-
 // Chatroom
-
 var numUsers = 0;
 
 io.on('connection', function (socket) {
@@ -76,6 +69,11 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('stop typing', {
       username: socket.username
     });
+  });
+
+  // start listening for coords
+  socket.on('send coords', function(data) {
+    socket.broadcast.emit('load coords', data);
   });
 
   // when the user disconnects.. perform this

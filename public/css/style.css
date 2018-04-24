@@ -19,6 +19,13 @@ h1 {
   color: #fff;
   text-align: center;
 }
+h2 {
+    font-weight: 100;
+    font-size: 20px;
+    margin: 24px;
+    color: #fff;
+    text-align: center;
+}
 
 /*** Send message */
 .form {
@@ -79,19 +86,17 @@ h1 {
 
 
 /*** Request button ***/
-button {
+button, button.requested:hover, button:active {
   color: #fff;
   font-family: monospace;
   text-align: center;
   background-color: #FF3B30;
   border: 1px solid #FF3B30;
-}
-#requestHelp {
   border-radius: 8px;
   padding: 16px;
   font-size: 24px;
 }
-button.on {
+button.requested {
   color: #FF3B30;
   background-color: #fff;
   border: 1px solid #FF3B30;

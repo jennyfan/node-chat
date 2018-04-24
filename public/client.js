@@ -32,7 +32,8 @@ $(function() {
   var $chatPage = $('#chat'); // The chatroom page
 
   // Prompt for setting a username
-  var username;
+  var username; // global username
+
   var connected = false;
   var typing = false;
   var lastTypingTime;
@@ -169,7 +170,7 @@ $(function() {
 
     var chatTop = $("#messages").scrollTop();
     var chatHeight = $("#messages").height();
-    console.log(chatHeight, chatTop);
+    // console.log(chatHeight, chatTop);
 
     $("#messages").scrollTop($messages[0].scrollHeight);
 
@@ -301,6 +302,17 @@ $(function() {
   socket.on('stop typing', function (data) {
     removeChatTyping(data);
   });
+
+  // Whenever server emits 'send coords', load coords
+  // socket.on('load coords', function (data) {
+  //   /*** Get your location ****/
+  //   log(data);
+  // });
+  //
+  // function showGPS(coords) {
+  //   console.log(coords);
+  //   socket.emit('send coords', coords);
+  // }
 
   socket.on('disconnect', function () {
     log('you have been disconnected');
