@@ -1,6 +1,5 @@
 var theMap, LeafMap, lat, lon;
 var coords; // global coords
-var showGPS; // global function
 
 var controls = document.getElementById("controls");
 var requestButton = document.getElementById("requestHelp");

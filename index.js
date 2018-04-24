@@ -72,9 +72,9 @@ io.on('connection', function (socket) {
   });
 
   // start listening for coords
-  socket.on('send coords', function(data) {
-    socket.broadcast.emit('load coords', data);
-  });
+  // socket.on('send coords', function(data) {
+  //   socket.broadcast.emit('load coords', data);
+  // });
 
   // when the user disconnects.. perform this
   socket.on('disconnect', function () {
