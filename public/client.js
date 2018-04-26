@@ -13,6 +13,10 @@
 //  });
 // });
 
+// Global
+var socket = io();
+
+
 $(function() {
   var FADE_TIME = 150; // ms
   var TYPING_TIMER_LENGTH = 400; // ms
@@ -39,8 +43,6 @@ $(function() {
   var lastTypingTime;
   var $currentInput = $usernameInput.focus();
 
-  var socket = io();
-
   function addParticipantsMessage (data) {
     console.log("addParticipantsMessage");
     var message = '';
@@ -56,10 +58,12 @@ $(function() {
   function setUsername () {
     username = $usernameInput.val();
     // username = cleanInput($usernameInput.val().trim());
-    console.log(username);
 
     // If the username is valid
     if (username) {
+
+      console.log('setting username', username);
+
       $loginPage.fadeOut();
       $chatPage.show();
       $loginPage.off('click');
@@ -67,6 +71,7 @@ $(function() {
 
       // Tell the server your username
       socket.emit('add user', username);
+
     }
   }
 
@@ -286,11 +291,10 @@ $(function() {
     addParticipantsMessage(data);
   });
 
-  // Whenever the server emits 'user left', log it in the chat body
-  socket.on('user left', function (data) {
-    log(data.username + ' left');
-    addParticipantsMessage(data);
-    removeChatTyping(data);
+  // user_requested_help
+  socket.on('user_requested_help', function (data) {
+    // log(data.username + ' need');
+    addParticipantsMessage(data.username + ' needs help');
   });
 
   // Whenever the server emits 'typing', show the typing message
@@ -313,6 +317,27 @@ $(function() {
   //   console.log(coords);
   //   socket.emit('send coords', coords);
   // }
+
+  // update users
+  socket.on('users', function (data) {
+    console.log('users', data);
+
+    var locations = []
+    for(var k in data) {
+        var user = data[k]
+        if (user.lat && user.lon && user.username != username) {
+            locations.push({
+                coords: [user.lat, user.lon],
+                name: user.username,
+                status: user.status
+            })
+        }
+    }
+
+    console.log(locations);
+    theMap.displayData = locations
+    theMap.updateVis();
+  });
 
   socket.on('disconnect', function () {
     log('you have been disconnected');

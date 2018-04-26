@@ -1,5 +1,6 @@
 var theMap, LeafMap, lat, lon;
 var coords; // global coords
+var watchID = null;
 
 var controls = document.getElementById("controls");
 var requestButton = document.getElementById("requestHelp");
@@ -50,13 +51,10 @@ var callData = [
  *  @param _parentElement   -- HTML element in which to draw the visualization
  *  @param _data            -- Array with all stations of the bike-sharing network
  */
-
 CallMap = function(_parentElement, _data, _mapPosition) {
-
 	this.parentElement = _parentElement;
 	this.data = _data;
 	this.mapPosition = _mapPosition;
-
 	this.initVis();
 }
 
@@ -64,34 +62,32 @@ CallMap = function(_parentElement, _data, _mapPosition) {
 /*
  *  Initialize map
  */
-
 CallMap.prototype.initVis = function() {
-	var vis = this;
+    var vis = this;
 
 	// Initialize leaflet map centered on coords
 	vis.callMap = L.map('call-map');
-  LeafMap = vis.callMap;
+    LeafMap = vis.callMap;
 
-  vis.callMap.setView([vis.mapPosition[0], vis.mapPosition[1]], 15);
+    vis.callMap.setView([vis.mapPosition[0], vis.mapPosition[1]], 15);
 
-	L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-			// attribution: 'NODE &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> / <a href="http://cartodb.com/attributions">CartoDB</a>',
-			subdomains: 'abcd',
-			maxZoom: 16,
-			minZoom: 13
-			})
-	 .addTo(vis.callMap);
+    L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+        // attribution: 'NODE &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> / <a href="http://cartodb.com/attributions">CartoDB</a>',
+        subdomains: 'abcd',
+        maxZoom: 16,
+        minZoom: 13})
+    .addTo(vis.callMap);
 
-	vis.wrangleData();
+    vis.wrangleData();
 }
 
 
 /*
  *  Data wrangling
  */
-
 CallMap.prototype.wrangleData = function() {
-	var vis = this;
+
+    var vis = this;
 
 	// Currently no data wrangling/filtering needed
 	vis.displayData = vis.data;
@@ -105,87 +101,137 @@ CallMap.prototype.wrangleData = function() {
 /*
  *  The drawing function
  */
-
 CallMap.prototype.updateVis = function() {
-	var vis = this;
+
+    console.log('update vis');
+    var vis = this;
 
 	// Add empty layer groups for the markers / map objects
 	vis.locations = L.layerGroup().addTo(vis.callMap);
 
 	vis.displayData.forEach(function(d) {
-		// Create a marker and bind a popup with a particular HTML content
-		var location = L.circle([d.coords[0], d.coords[1]], {radius: 25}).setStyle({className:'spots'}).bindTooltip(d.name);
 
-		vis.locations.addLayer(location);
+        // you have the user status -> d.status
+        console.log(d);
+        // Create a marker and bind a popup with a particular HTML content
+        var location = L.circle([d.coords[0], d.coords[1]], {radius: 25}).setStyle({className:'spots'}).bindTooltip(d.name);
+        vis.locations.addLayer(location);
 	});
 
 	d3.select("#requestHelp").on("click", function() {
-    if (this.className == "requested") {
-      console.log("unrequest");
-        $(this).text("Request Help");
-        $(this).removeClass('requested');
 
-        LeafMap.flyTo([lat, lon], 14, {
-          pan: { animate: true },
-          zoom: { animate: true }
-        });
-    } else {
-      console.log("get location");
-      getLocation();
-    }
-  });
+        if (this.className == "requested") {
+            console.log("unrequest");
+
+            $(this).text("Request Help");
+            $(this).removeClass('requested');
+
+            LeafMap.flyTo([lat, lon], 14, {
+                pan: { animate: true },
+                zoom: { animate: true }
+            });
+
+        } else {
+            console.log("get location");
+            socket.emit('set_status', 'finding_location');
+
+            getLocation();
+        }
+    });
 }
 
 
+function onLocationSuccess(position) {
+    console.log(position);
+    showPosition(position)
+}
 
+function onLocationError(error) {
+    console.log(error);
+    showError(error)
+}
 
 /*** Get your location ****/
 function getLocation() {
-	console.log("get location");
 
     if (navigator.geolocation) {
         requestButton.innerHTML = "Requesting help...";
 
-        navigator.geolocation.getCurrentPosition(showPosition,showError, {enableHighAccuracy:true,maximumAge: Infinity,timeout:50000});
+
+        // see options: https://developer.mozilla.org/en-US/docs/Web/API/PositionOptions
+        var options = {
+            enableHighAccuracy: true,
+            //timeout: 5000,
+            //maximumAge: Infinity
+        };
+
+        watchID = navigator.geolocation.watchPosition(onLocationSuccess, onLocationError, options);
+
     } else {
         controls.innerHTML = "Geolocation is not supported by this browser.";
     }
+
+    // console.log(navigator);
+	// console.log("gett location");
+    // if (navigator.geolocation) {
+    //     requestButton.innerHTML = "Requesting help...";
+    //     navigator.geolocation.getCurrentPosition(showPosition,showError, {enableHighAccuracy:true,maximumAge: Infinity,timeout:50000});
+    // } else {
+    //     controls.innerHTML = "Geolocation is not supported by this browser.";
+    // }
 }
 
 function showPosition(position) {
-	// console.log(position);
-  // GUND Default: 42.3760051, -71.1138934
 
-  lat = position.coords.latitude;
-	lon = position.coords.longitude;
+    // console.log(position);
+    // GUND Default: 42.3760051, -71.1138934
+    lat = position.coords.latitude;
+    lon = position.coords.longitude;
+    console.log(lat, lon);
 
-	var yourLocation = L.circle([lat, lon], {radius: 50}).setStyle({className:'spotsYou'}).bindTooltip("Your location", {className: 'tooltipYou'});
+    // post your location to the server
+    socket.emit('location', {
+        lat: lat,
+        lon: lon
+    });
 
-  requestButton.innerHTML = "Help Requested";
-  requestButton.setAttribute('class','requested');
+    socket.emit('set_status', 'requested_help');
 
-	theMap.locations.addLayer(yourLocation);
+    var yourLocation = L.circle([lat, lon], {radius: 50}).setStyle({className:'spotsYou'}).bindTooltip("Your location", {className: 'tooltipYou'});
 
-  LeafMap.flyTo([lat, lon], 15, {
-    pan: { animate: true },
-    zoom: { animate: true }
-  });
+    requestButton.innerHTML = "Help Requested";
+    requestButton.setAttribute('class','requested');
 
-  coords = [lat.toPrecision(8),lon.toPrecision(8)];
-  $("#coords").text(coords);
+    theMap.locations.addLayer(yourLocation);
+
+
+    LeafMap.flyTo([lat, lon], 15, {
+        pan: { animate: true },
+        zoom: { animate: true }
+    });
+
+    coords = [lat.toPrecision(8), lon.toPrecision(8)];
+
+    $("#coords").text(coords);
 
     $("#requestHelp").on("mouseover", function() {
-      if (this.className == "cancelled") {
-        $(this).text("Request Help")
-      } else {
-        $(this).text("Cancel Request")
-      }
+
+        if (this.className == "cancelled") {
+            $(this).text("Request Help")
+        } else {
+            $(this).text("Cancel Request")
+        }
+
     }).on("click", function() {
-      $(this).addClass("cancelled");
-      $("#coords").text("");
+
+
+
+        $(this).addClass("cancelled");
+        $("#coords").text("");
+
     }).on("mouseout", function() {
         if (this.className == "cancelled") {
-          $(this).text("Request Help")
+            $(this).text("Request Help")
         } else {
           $(this).text("Help Requested")
         }
@@ -200,9 +246,13 @@ function showError(error) {
         case error.POSITION_UNAVAILABLE:
             controls.innerHTML = "Location information is unavailable."
             break;
-        case error.TIMEOUT:
+
+        // this is ok - we are pooling...
+        /*case error.TIMEOUT:
             controls.innerHTML = "The request to get user location timed out."
             break;
+        */
+
         case error.UNKNOWN_ERROR:
             controls.innerHTML = "An unknown error occurred."
             break;
@@ -210,12 +260,11 @@ function showError(error) {
 }
 
 function loadData() {
-    callData.forEach(function(d) {
+    /*callData.forEach(function(d) {
   		d.name = d.name;
-      d.lat = d.coords[0];
-      d.long = d.coords[1];
-  	});
-
+        d.lat = d.coords[0];
+        d.long = d.coords[1];
+  	});*/
   	// create instance of map
   	createVis();
 }
@@ -223,6 +272,6 @@ function loadData() {
 
 function createVis(error) {
   if(error) { console.log(error); }
-
-  theMap = new CallMap("call-map", callData, [42.361089, -71.05691]);
+  // start the map with no location and a start location of boston
+  theMap = new CallMap("call-map", [], [42.361089, -71.05691]);
 }

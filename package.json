@@ -5,6 +5,7 @@
   "dependencies": {
     "express": "^4.15.2",
     "heroku-ssl-redirect": "0.0.4",
+    "lodash": "^4.17.10",
     "socket.io": "^1.7.3"
   },
   "engines": {
@@ -12,6 +13,6 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   }
 }
