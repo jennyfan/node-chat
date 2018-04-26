@@ -1,5 +1,6 @@
 /*** Reference for Socket.io app: https://blog.xmartlabs.com/2012/12/21/geographic-chat-app-with-nodejs-part2/ **/
 
+var sslRedirect = require('heroku-ssl-redirect');
 var express = require('express');
 var app = require('express')();
 var http = require('http').Server(app);
@@ -10,6 +11,8 @@ http.listen(port, function(){
   console.log('listening on *:' + port);
 });
 
+// enable ssl redirect
+app.use(sslRedirect());
 
 // Routing
 app.use(express.static('public'));

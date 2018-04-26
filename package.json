@@ -4,6 +4,7 @@
   "description": "Mesh Network for Connected Emergency Response",
   "dependencies": {
     "express": "^4.15.2",
+    "heroku-ssl-redirect": "0.0.4",
     "socket.io": "^1.7.3"
   },
   "engines": {
