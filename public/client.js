@@ -281,7 +281,9 @@ $(function() {
 
   // user_requested_help
   socket.on('user_requested_help', function (data) {
+
     log(data.username + ' needs help');
+
     console.log(data);
     addParticipantsMessage(data);
   });

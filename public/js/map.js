@@ -193,7 +193,7 @@ function showPosition(position) {
     // console.log(lat, lon);
 
     socket.emit('set_status', 'requested_help');
-
+    
     // post your location to the server
     socket.emit('location', {
         lat: lat,

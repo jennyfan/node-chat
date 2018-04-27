@@ -84,7 +84,7 @@ button:hover {
   max-width: 480px;
   overflow-y: scroll;
   position: absolute;
-  bottom: 80px;
+  top: 50%;
   z-index: 100;
 }
 #messages ul, li {
@@ -128,7 +128,7 @@ button.requested {
 }
 .controls {
   position: absolute;
-  top: 80px;
+  top: 48px;
   left: 0px;
   width: 100%;
   padding: 24px;
