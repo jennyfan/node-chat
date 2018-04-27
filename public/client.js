@@ -34,6 +34,8 @@ $(function() {
     if (data.numUsers === 1) {
       message += "1 participant online";
     } else {
+      console.log(data);
+      console.log(data.numUsers);
       message += data.numUsers + " participants online";
     }
     log(message);
@@ -273,10 +275,14 @@ $(function() {
     addParticipantsMessage(data);
   });
 
+  socket.on('user left', function (data) {
+    log(data.username + ' left');
+  });
+
   // user_requested_help
   socket.on('user_requested_help', function (data) {
-    // log(data.username + ' need');
-    addParticipantsMessage(data.username + ' needs help');
+    log(data.username + ' needs help');
+    addParticipantsMessage(data);
   });
 
   // Whenever the server emits 'typing', show the typing message
@@ -309,6 +315,7 @@ $(function() {
 
     console.log(locations);
     theMap.displayData = locations;
+    console.log("UPDATE VIS from USERS broadcast");
     theMap.updateVis();
   });
 

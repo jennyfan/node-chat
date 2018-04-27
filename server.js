@@ -8,7 +8,7 @@ var _ = require('lodash')
 
 
 http.listen(port, function() {
-    console.log('listening on *:' + port);
+    // console.log('listening on *:' + port);
 });
 
 // enable ssl redirect
@@ -27,7 +27,7 @@ var users = {}
 
 io.on('connection', function (socket) {
     var addedUser = false;
-    console.log('server connection');
+    // console.log('server connection');
 
     // when the client emits 'new message', this listens and executes
     socket.on('new message', function (data) {
@@ -70,12 +70,12 @@ io.on('connection', function (socket) {
         // update all users
         socket.broadcast.emit('users', users);
 
-        console.log(users);
+        console.log('add users: ', users);
   });
 
   // when the client emits 'typing', we broadcast it to others
   socket.on('typing', function () {
-      console.log('typing');
+      // console.log('typing');
       var user = users[socket.id]
       if (user) {
           socket.broadcast.emit('typing', {
@@ -104,11 +104,14 @@ io.on('connection', function (socket) {
           socket.broadcast.emit('users', users);
       }
 
-      console.log(users);
+      console.log("set status", users);
   })
 
   // update locations from client
   socket.on('location', function (data) {
+    console.log('update location');
+
+      // break;
       var user = users[socket.id];
       if (user) {
 

@@ -94,6 +94,7 @@ CallMap.prototype.wrangleData = function() {
     // console.log(vis.displayData);
 
 	// Update the visualization
+  console.log("FIRST UPDATE VIS");
 	vis.updateVis();
 }
 
@@ -117,38 +118,28 @@ CallMap.prototype.updateVis = function() {
         var location = L.circle([d.coords[0], d.coords[1]], {radius: 25}).setStyle({className:'spots'}).bindTooltip(d.name);
         vis.locations.addLayer(location);
 	});
+  d3.select("#requestHelp").on("click", function() {
+     // if already requested
+     if (this.className == "requested") {
+         console.log("unrequest");
+         // allow an "unrequest"
+         $(this).text("Request Help");
+         $(this).removeClass('requested');
+         // reset map
+         LeafMap.flyTo([lat, lon], 14, {
+             pan: { animate: true },
+             zoom: { animate: true }
+         });
 
-	d3.select("#requestHelp").on("click", function() {
+     } else {
+       // requests help
+         console.log("get location");
+         socket.emit('set_status', 'finding_location');
 
-        if (this.className == "requested") {
-            console.log("unrequest");
+         getLocation();
+     }
+  });
 
-            $(this).text("Request Help");
-            $(this).removeClass('requested');
-
-            LeafMap.flyTo([lat, lon], 14, {
-                pan: { animate: true },
-                zoom: { animate: true }
-            });
-
-        } else {
-            console.log("get location");
-            socket.emit('set_status', 'finding_location');
-
-            getLocation();
-        }
-    });
-}
-
-
-function onLocationSuccess(position) {
-    console.log(position);
-    showPosition(position)
-}
-
-function onLocationError(error) {
-    console.log(error);
-    showError(error)
 }
 
 /*** Get your location ****/
@@ -156,7 +147,6 @@ function getLocation() {
 
     if (navigator.geolocation) {
         requestButton.innerHTML = "Requesting help...";
-
 
         // see options: https://developer.mozilla.org/en-US/docs/Web/API/PositionOptions
         var options = {
@@ -181,13 +171,25 @@ function getLocation() {
     // }
 }
 
+function onLocationSuccess(position) {
+    // console.log(position);
+    showPosition(position)
+}
+
+function onLocationError(error) {
+    console.log(error);
+    showError(error)
+}
+
 function showPosition(position) {
 
     // console.log(position);
     // GUND Default: 42.3760051, -71.1138934
     lat = position.coords.latitude;
     lon = position.coords.longitude;
-    console.log(lat, lon);
+    // console.log(lat, lon);
+
+    socket.emit('set_status', 'requested_help');
 
     // post your location to the server
     socket.emit('location', {
@@ -195,9 +197,8 @@ function showPosition(position) {
         lon: lon
     });
 
-    socket.emit('set_status', 'requested_help');
-
     var yourLocation = L.circle([lat, lon], {radius: 50}).setStyle({className:'spotsYou'}).bindTooltip("Your location", {className: 'tooltipYou'});
+    console.log("yourLocation", yourLocation);
 
     requestButton.innerHTML = "Help Requested";
     requestButton.setAttribute('class','requested');
@@ -225,7 +226,6 @@ function showPosition(position) {
         }
 
     }).on("click", function() {
-
         // actually cancel it
         $(this).addClass("cancelled");
         $("#coords").text("");
@@ -238,6 +238,7 @@ function showPosition(position) {
         }
     });
 }
+
 
 function showError(error) {
     switch(error.code) {
