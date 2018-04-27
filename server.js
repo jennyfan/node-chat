@@ -1,4 +1,3 @@
-/*** Reference for Socket.io app: https://blog.xmartlabs.com/2012/12/21/geographic-chat-app-with-nodejs-part2/ **/
 var sslRedirect = require('heroku-ssl-redirect');
 var express = require('express');
 var app = require('express')();
@@ -32,7 +31,7 @@ io.on('connection', function (socket) {
 
     // when the client emits 'new message', this listens and executes
     socket.on('new message', function (data) {
-        var user = users[socket.id]
+        var user = users[socket.id];
         if (user) {
             console.log('new message from', user.username);
 
@@ -99,7 +98,7 @@ io.on('connection', function (socket) {
   socket.on('set_status', function (status) {
       var user = users[socket.id]
       if (user) {
-          user.status = status
+          user.status = status;
 
           // update all users
           socket.broadcast.emit('users', users);
@@ -110,15 +109,15 @@ io.on('connection', function (socket) {
 
   // update locations from client
   socket.on('location', function (data) {
-      var user = users[socket.id]
+      var user = users[socket.id];
       if (user) {
 
           if (user.status == 'requested_help') {
               socket.broadcast.emit('user_requested_help', user);
           }
 
-          user.lat = data.lat
-          user.lon = data.lon
+          user.lat = data.lat;
+          user.lon = data.lon;
 
           console.log('adding location', user);
 
@@ -127,20 +126,14 @@ io.on('connection', function (socket) {
       }
   });
 
-  // start listening for coords
-  // socket.on('send coords', function(data) {
-  //   socket.broadcast.emit('load coords', data);
-  // });
-
   // when the user disconnects.. perform this
   socket.on('disconnect', function () {
 
-      var user = users[socket.id]
+      var user = users[socket.id];
 
       if (user) {
-
-          var username = user.username
-          delete users[socket.id]
+          var username = user.username;
+          delete users[socket.id];
 
           // echo globally that this client has left
           socket.broadcast.emit('user left', {

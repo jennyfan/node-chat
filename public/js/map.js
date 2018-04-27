@@ -210,22 +210,23 @@ function showPosition(position) {
         zoom: { animate: true }
     });
 
+    // trim coords for printing
     coords = [lat.toPrecision(8), lon.toPrecision(8)];
 
     $("#coords").text(coords);
 
     $("#requestHelp").on("mouseover", function() {
-
+        // if cancelled, enable re-requesting
         if (this.className == "cancelled") {
             $(this).text("Request Help")
         } else {
+            // if not cancelled + requested, allow cancel
             $(this).text("Cancel Request")
         }
 
     }).on("click", function() {
 
-
-
+        // actually cancel it
         $(this).addClass("cancelled");
         $("#coords").text("");
 

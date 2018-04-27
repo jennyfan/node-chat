@@ -1,18 +1,3 @@
-// $(function () {
-//   var socket = io();
-//
-//   // post chat message
-//  $('form').submit(function(){
-//    socket.emit('chat message', $('#m').val());
-//    $('#m').val('');
-//    return false;
-//  });
-//  socket.on('chat message', function(msg){
-//    $('#messages ul').append($('<li>').text(msg));
-//    window.scrollTo(0, document.body.scrollHeight);
-//  });
-// });
-
 // Global
 var socket = io();
 
@@ -178,9 +163,6 @@ $(function() {
     // console.log(chatHeight, chatTop);
 
     $("#messages").scrollTop($messages[0].scrollHeight);
-
-    // window.scrollTo(0, document.body.scrollHeight);
-    // $messages[0].scrollTop = $messages[0].scrollHeight;
   }
 
   // Prevents input from having injected markup
@@ -307,25 +289,16 @@ $(function() {
     removeChatTyping(data);
   });
 
-  // Whenever server emits 'send coords', load coords
-  // socket.on('load coords', function (data) {
-  //   /*** Get your location ****/
-  //   log(data);
-  // });
-  //
-  // function showGPS(coords) {
-  //   console.log(coords);
-  //   socket.emit('send coords', coords);
-  // }
-
   // update users
   socket.on('users', function (data) {
     console.log('users', data);
 
-    var locations = []
+    var locations = [];
     for(var k in data) {
         var user = data[k]
+        // if user data isn't you
         if (user.lat && user.lon && user.username != username) {
+            // add other people to locations
             locations.push({
                 coords: [user.lat, user.lon],
                 name: user.username,
@@ -335,7 +308,7 @@ $(function() {
     }
 
     console.log(locations);
-    theMap.displayData = locations
+    theMap.displayData = locations;
     theMap.updateVis();
   });
 
