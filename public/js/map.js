@@ -118,6 +118,9 @@ CallMap.prototype.updateVis = function() {
         var location = L.circle([d.coords[0], d.coords[1]], {radius: 25}).setStyle({className:'spots'}).bindTooltip(d.name);
         vis.locations.addLayer(location);
 	});
+
+
+  // USER CLICKS BUTTON
   d3.select("#requestHelp").on("click", function() {
      // if already requested
      if (this.className == "requested") {

@@ -29,7 +29,7 @@ $(function() {
   var $currentInput = $usernameInput.focus();
 
   function addParticipantsMessage (data) {
-    console.log("addParticipantsMessage");
+    // console.log("addParticipantsMessage");
     var message = '';
     if (data.numUsers === 1) {
       message += "1 participant online";
@@ -82,7 +82,7 @@ $(function() {
 
   // Log a message
   function log (message, options) {
-    console.log("log function");
+    // console.log("log function");
     var $el = $("<li>").addClass('log').text(message);
     addMessageElement($el, options);
   }
@@ -135,7 +135,7 @@ $(function() {
   // options.prepend - If the element should prepend
   //   all other messages (default = false)
   function addMessageElement (el, options) {
-    console.log("addMessageElement");
+    // console.log("addMessageElement");
     var $el = $(el);
 
     // Setup default options
@@ -158,7 +158,7 @@ $(function() {
     } else {
       $messages.append($el);
     }
-    console.log("message scroll to");
+    // console.log("message scroll to");
 
     var chatTop = $("#messages").scrollTop();
     var chatHeight = $("#messages").height();
@@ -282,6 +282,7 @@ $(function() {
   // user_requested_help
   socket.on('user_requested_help', function (data) {
     log(data.username + ' needs help');
+    console.log(data);
     addParticipantsMessage(data);
   });
 

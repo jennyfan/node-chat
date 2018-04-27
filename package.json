@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Mesh Network for Connected Emergency Response",
   "dependencies": {
+    "build": "^0.1.4",
     "express": "^4.15.2",
     "heroku-ssl-redirect": "0.0.4",
     "lodash": "^4.17.10",

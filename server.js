@@ -114,9 +114,13 @@ io.on('connection', function (socket) {
       // break;
       var user = users[socket.id];
       if (user) {
-
           if (user.status == 'requested_help') {
-              socket.broadcast.emit('user_requested_help', user);
+              socket.broadcast.emit('user_requested_help',
+              {
+                username: user.username,
+                numUsers: _.size(users)
+              }
+            );
           }
 
           user.lat = data.lat;
